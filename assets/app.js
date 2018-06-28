@@ -30,10 +30,19 @@ database.ref().on("child_added", function(snapshot){
     var firstTrain = $("<td>")
     var frequency = $("<td>")
     var minutesAway= $("<td>")
+    var trainFrequency= snapshot.val().frequency
+    var first=snapshot.val().firstTrain
+    var firstConverted= moment(first, "HH:mm").subtract(1, "years")
+    var diffTime = moment().diff(moment(firstConverted), "minutes")
+    var tRemainder = diffTime%trainFrequency
+    var minutesTillTrain= trainFrequency- tRemainder
+    var nextTrain= moment().add(minutesTillTrain, "minutes")
+    
     trainName.text(snapshot.val().trainName)
     destination.text(snapshot.val().destination)
-    firstTrain.text(snapshot.val().firstTrain)
+    firstTrain.text(moment(nextTrain).format("hh:mm a"))
     frequency.text(snapshot.val().frequency)
+    minutesAway.text(minutesTillTrain)
     //gonna need some voodoo to calculate minutes away
     // and next arrival
     row.append(trainName)
@@ -44,3 +53,5 @@ database.ref().on("child_added", function(snapshot){
     $("tbody").append(row)
 
 })
+
+
